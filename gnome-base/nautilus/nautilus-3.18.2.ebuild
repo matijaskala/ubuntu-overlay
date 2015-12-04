@@ -6,7 +6,7 @@ EAPI="5"
 GCONF_DEBUG="no"
 GNOME2_LA_PUNT="yes" # Needed with USE 'sendto'
 
-inherit eutils gnome2 readme.gentoo virtualx
+inherit autotools base eutils gnome2 readme.gentoo virtualx
 
 DESCRIPTION="A file manager for the GNOME desktop patched for the Unity desktop"
 HOMEPAGE="https://wiki.gnome.org/Apps/Nautilus"
@@ -81,6 +81,8 @@ src_prepare() {
 	for patch in $(cat "${FILESDIR}/patches/series" | grep -v '#'); do
 		PATCHES+=( "${FILESDIR}/patches/${patch}" )
 	done
+	base_src_prepare
+	eautoreconf
 
 	if use previewer; then
 		DOC_CONTENTS="nautilus uses gnome-extra/sushi to preview media files.
