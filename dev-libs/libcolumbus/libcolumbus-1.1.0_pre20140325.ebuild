@@ -5,12 +5,12 @@
 EAPI=5
 PYTHON_COMPAT=( python{3_3,3_4} )
 
-UVER_PREFIX="+14.04.20140325.3"
-
 inherit cmake-utils eutils python-r1 ubuntu-versionator
 
 DESCRIPTION="Error tolerant matching engine used by the Unity desktop"
 HOMEPAGE="https://launchpad.net/libcolumbus"
+MY_PV=${PV/_pre/+14.04.}.3
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0/${PV}"
