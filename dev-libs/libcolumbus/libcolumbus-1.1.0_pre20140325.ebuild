@@ -5,7 +5,7 @@
 EAPI=5
 PYTHON_COMPAT=( python{3_3,3_4} )
 
-inherit cmake-utils eutils python-r1 ubuntu-versionator
+inherit cmake-utils eutils python-r1
 
 DESCRIPTION="Error tolerant matching engine used by the Unity desktop"
 HOMEPAGE="https://launchpad.net/libcolumbus"
@@ -17,6 +17,7 @@ SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
 IUSE="debug test"
 REQUIRED_USE="test? ( debug )"
+S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
 
 DEPEND="dev-cpp/sparsehash
