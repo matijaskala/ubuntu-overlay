@@ -5,15 +5,18 @@
 EAPI=5
 
 URELEASE="wily"
-inherit cmake-utils ubuntu-versionator
+inherit cmake-utils
 
 DESCRIPTION="Library to facilitate testing DBus interactions in Qt applications"
 HOMEPAGE="https://launchpad.net/libqtdbustest"
+MY_PV="${PV/_pre/+15.10.}"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="test"
+S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
 
 DEPEND="dev-cpp/gmock
