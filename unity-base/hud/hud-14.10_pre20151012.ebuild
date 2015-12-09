@@ -7,15 +7,18 @@ GNOME2_LA_PUNT="yes"
 PYTHON_COMPAT=( python2_7 )
 DISTUTILS_SINGLE_IMPL=1
 
-inherit cmake-utils distutils-r1 flag-o-matic gnome2-utils ubuntu-versionator vala
+inherit cmake-utils distutils-r1 flag-o-matic gnome2-utils vala
 
 DESCRIPTION="Backend for the Unity HUD"
 HOMEPAGE="https://launchpad.net/hud"
+MY_PV="${PV/_pre/+15.10.}"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="amd64 x86"
 IUSE="test"
+S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
 
 DEPEND="
