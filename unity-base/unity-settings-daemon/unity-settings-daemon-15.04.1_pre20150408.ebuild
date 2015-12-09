@@ -6,10 +6,12 @@ EAPI="5"
 GNOME2_LA_PUNT="yes"
 GCONF_DEBUG="no"
 
-inherit autotools base eutils flag-o-matic gnome2 virtualx ubuntu-versionator
+inherit autotools base eutils flag-o-matic gnome2 virtualx
 
 DESCRIPTION="Unity Settings Daemon"
 HOMEPAGE="https://launchpad.net/unity-settings-daemon"
+MY_PV="${PV/_pre/+15.04.}"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -17,6 +19,7 @@ IUSE="+colord +cups debug fcitx +i18n input_devices_wacom nls packagekit policyk
 KEYWORDS="~amd64 ~x86"
 REQUIRED_USE="packagekit? ( udev )
 		smartcard? ( udev )"
+S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
 
 # require colord-0.1.27 dependency for connection type support

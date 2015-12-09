@@ -5,15 +5,18 @@
 EAPI="5"
 GCONF_DEBUG="no"
 
-inherit autotools gnome2 ubuntu-versionator
+inherit autotools gnome2
 
 DESCRIPTION="GSettings deskop-wide schemas for the Unity desktop"
 HOMEPAGE="https://launchpad.net/gsettings-ubuntu-touch-schemas"
+MY_PV="${PV/_pre/+14.10.}"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
 IUSE=""
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-interix ~amd64-linux ~arm-linux ~x86-linux ~x64-macos ~sparc-solaris ~x86-solaris"
+S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
 
 RDEPEND="sys-auth/polkit-pkla-compat"

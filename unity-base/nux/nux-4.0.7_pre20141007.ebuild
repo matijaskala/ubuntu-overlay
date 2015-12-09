@@ -4,15 +4,18 @@
 
 EAPI=5
 
-inherit autotools eutils ubuntu-versionator
+inherit autotools eutils
 
 DESCRIPTION="Visual rendering toolkit for the Unity desktop"
 HOMEPAGE="http://launchpad.net/nux"
+MY_PV="${PV/_pre/+14.10.}"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3 LGPL-3"
 SLOT="0/4"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
+S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
 
 RDEPEND="media-libs/glew:=

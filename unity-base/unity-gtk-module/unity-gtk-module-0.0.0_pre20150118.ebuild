@@ -5,15 +5,18 @@
 EAPI=5
 PYTHON_COMPAT=( python2_7 )
 
-inherit autotools eutils python-r1 ubuntu-versionator
+inherit autotools eutils python-r1
 
 DESCRIPTION="GTK+ module for exporting old-style menus as GMenuModels"
 HOMEPAGE="https://launchpad.net/unity-gtk-module"
+MY_PV="${PV/_pre/+15.04.}"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
+S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
 
 RDEPEND=">=dev-libs/glib-2.38
