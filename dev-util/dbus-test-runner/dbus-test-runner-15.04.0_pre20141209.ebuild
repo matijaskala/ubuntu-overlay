@@ -4,7 +4,7 @@
 
 EAPI=5
 
-inherit autotools flag-o-matic ubuntu-versionator
+inherit autotools flag-o-matic
 
 DESCRIPTION="Run executables under a new DBus session for testing"
 HOMEPAGE="https://launchpad.net/dbus-test-runner"
