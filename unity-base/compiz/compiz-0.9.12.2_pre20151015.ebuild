@@ -78,7 +78,6 @@ RDEPEND="${COMMONDEPEND}
 	x11-apps/xvinfo"
 
 pkg_setup() {
-	ubuntu-versionator_pkg_setup
 	gnome2_environment_reset
 }
 
