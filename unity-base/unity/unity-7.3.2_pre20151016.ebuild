@@ -62,8 +62,8 @@ COMMONDEPEND="
 	x11-libs/startup-notification
 "
 RDEPEND="$COMMONDEPEND
-	gnome-base/gnome-control-center
-	gnome-base/gnome-settings-daemon
+	unity-base/unity-control-center
+	unity-base/unity-settings-daemon
 	unity-base/gsettings-ubuntu-touch-schemas
 	unity-base/unity-language-pack
 	x11-themes/humanity-icon-theme

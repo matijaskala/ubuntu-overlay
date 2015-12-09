@@ -10,8 +10,10 @@ inherit autotools base eutils flag-o-matic gnome2 virtualx
 
 DESCRIPTION="Unity Settings Daemon"
 HOMEPAGE="https://launchpad.net/unity-settings-daemon"
-MY_PV="${PV/_pre/+15.04.}"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
+MY_PV="${PV/_pre/+15.10.}"
+UURL="https://launchpad.net/ubuntu/+archive/primary/+files"
+SRC_URI="${UURL}/${PN}_${MY_PV}.orig.tar.gz
+	${UURL}/${PN}_${MY_PV}-0ubuntu1.diff.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -82,6 +84,9 @@ DEPEND="${COMMON_DEPEND}
 	>=x11-proto/xproto-7.0.15"
 
 src_prepare() {
+	# Ubuntu patchset #
+	epatch -p1 "${WORKDIR}/${MY_P}${UVER_PREFIX}-${UVER}.diff"  # This needs to be applied for the debian/ directory to be present #
+
 	# https://bugzilla.gnome.org/show_bug.cgi?id=621836
 	# Apparently this change severely affects touchpad usability for some
 	# people, so revert it if USE=short-touchpad-timeout.
@@ -91,6 +96,10 @@ src_prepare() {
 
 	# Make colord and wacom optional; requires eautoreconf
 	epatch "${FILESDIR}/${PN}-optional-color-wacom.patch"
+
+	# Correct path to unity-settings-daemon executable in upstart files #
+	sed -e 's:/usr/lib/unity-settings-daemon:/usr/libexec:g' \
+		-i debian/unity-settings-daemon.user-session.{desktop,upstart}
 
 	eautoreconf
 	gnome2_src_prepare
@@ -116,6 +125,13 @@ src_configure() {
 		$(use_enable input_devices_wacom wacom)
 }
 
+src_compile() {
+	gnome2_src_compile
+	gcc -o gnome-settings-daemon/gnome-update-wallpaper-cache \
+		debian/gnome-update-wallpaper-cache.c \
+			$(pkg-config --cflags --libs glib-2.0 gdk-3.0 gdk-x11-3.0 gio-2.0 gnome-desktop-3.0) || die
+}
+
 src_install() {
 	gnome2_src_install
 
@@ -123,8 +139,17 @@ src_install() {
 	#  due to being provided by Ubuntu's language-pack packages #
 	rm -rf "${ED}usr/share/locale"
 
+	insinto /usr/lib/unity-settings-daemon
+	doins gnome-settings-daemon/gnome-update-wallpaper-cache
+
 	dodir /usr/share/hwdata
 	dosym /usr/share/libgnome-desktop-3.0/pnp.ids /usr/share/hwdata/pnp.ids
+
+	# Install upstart files #
+	insinto /usr/share/upstart/xdg/autostart
+	newins debian/unity-settings-daemon.user-session.desktop unity-settings-daemon.desktop
+	insinto /usr/share/upstart/sessions/
+	newins debian/unity-settings-daemon.user-session.upstart unity-settings-daemon.conf
 
 	prune_libtool_files --modules
 }
