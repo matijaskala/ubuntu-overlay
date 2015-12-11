@@ -9,7 +9,7 @@ inherit autotools eutils vala python-single-r1
 
 DESCRIPTION="BAMF Application Matching Framework"
 HOMEPAGE="https://launchpad.net/bamf"
-MY_PV="${PV/_pre/~bzr0+15.10.}.1"
+MY_PV="${PV/_pre/~bzr0+16.04.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="LGPL-3"
