@@ -9,7 +9,7 @@ inherit autotools gnome2
 
 DESCRIPTION="GSettings deskop-wide schemas for the Unity desktop"
 HOMEPAGE="https://launchpad.net/gsettings-ubuntu-touch-schemas"
-MY_PV="${PV/_pre/+14.10.}"
+MY_PV="${PV/_pre/+15.10.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="LGPL-2.1"
