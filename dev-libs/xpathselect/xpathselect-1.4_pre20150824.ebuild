@@ -9,7 +9,7 @@ inherit cmake-utils
 
 DESCRIPTION="Select objects in an object tree using XPath queries"
 HOMEPAGE="https://launchpad.net/xpathselect"
-MY_PV="${PV/_pre/+14.04.}"
+MY_PV="${PV/_pre/+15.10.}.1"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz
 	test? ( http://googletest.googlecode.com/files/gtest-${GTESTVER}.zip )"
 
@@ -17,6 +17,8 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="amd64 x86"
 IUSE="test"
+S=${WORKDIR}/${PN}-${MY_PV}
+RESTRICT="mirror"
 
 DEPEND="test? ( dev-cpp/gtest )
 	dev-libs/boost"
