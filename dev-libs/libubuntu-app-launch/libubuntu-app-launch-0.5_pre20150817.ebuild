@@ -9,14 +9,14 @@ inherit cmake-utils
 
 DESCRIPTION="Session init system job for launching applications, libraries only"
 HOMEPAGE="https://launchpad.net/ubuntu-app-launch"
-MY_PV="${PV/_pre/+15.04.}"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
+MY_PV="${PV/_pre/+15.10.}"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${UPN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+threads"
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}/${UPN}-${MY_PV}
 RESTRICT="mirror"
 
 DEPEND="app-admin/cgmanager
