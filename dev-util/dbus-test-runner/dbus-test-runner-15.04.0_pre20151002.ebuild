@@ -8,7 +8,7 @@ inherit autotools flag-o-matic
 
 DESCRIPTION="Run executables under a new DBus session for testing"
 HOMEPAGE="https://launchpad.net/dbus-test-runner"
-MY_PV="${PV/_pre/+15.04.}"
+MY_PV="${PV/_pre/+15.10.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
