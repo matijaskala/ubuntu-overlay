@@ -9,7 +9,7 @@ inherit cmake-utils eutils python-r1
 
 DESCRIPTION="Error tolerant matching engine used by the Unity desktop"
 HOMEPAGE="https://launchpad.net/libcolumbus"
-MY_PV=${PV/_pre/+14.04.}.3
+MY_PV=${PV/_pre/+15.10.}
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-2"
