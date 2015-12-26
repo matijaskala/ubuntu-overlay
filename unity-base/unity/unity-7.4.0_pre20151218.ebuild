@@ -12,7 +12,7 @@ inherit base cmake-utils distutils-r1 eutils gnome2 pam toolchain-funcs
 
 DESCRIPTION="The Ubuntu Unity Desktop"
 HOMEPAGE="https://launchpad.net/unity"
-MY_PV="${PV/_pre/+15.10.}"
+MY_PV="${PV/_pre/+16.04.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3 LGPL-3"
