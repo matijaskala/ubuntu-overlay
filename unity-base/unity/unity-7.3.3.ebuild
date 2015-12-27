@@ -14,6 +14,7 @@ DESCRIPTION="The Ubuntu Unity Desktop"
 HOMEPAGE="https://launchpad.net/unity"
 MY_PV="${PV/_pre/+16.04.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
+SRC_URI="https://launchpad.net/${PN}/7.3/${PV}/+download/${P}.tar.bz2"
 
 LICENSE="GPL-3 LGPL-3"
 SLOT="0"
