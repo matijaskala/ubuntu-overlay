@@ -210,16 +210,6 @@ src_install() {
 	# Remove all installed language files as they can be incomplete #
 	#  due to being provided by Ubuntu's language-pack packages #
 	rm -rf "${ED}usr/share/locale"
-
-	# Setup gconf defaults #
-	dodir /etc/gconf/2
-	if [ -z "`grep gconf.xml.unity /etc/gconf/2/local-defaults.path 2> /dev/null`" ]; then
-		echo "/etc/gconf/gconf.xml.unity" >> ${D}etc/gconf/2/local-defaults.path
-	fi
-	dodir /etc/gconf/gconf.xml.unity 2> /dev/null
-	/usr/bin/update-gconf-defaults \
-		--source="${ED}usr/share/gconf/defaults" \
-			--destination="${ED}etc/gconf/gconf.xml.unity" || die
 }
 
 pkg_preinst() {
