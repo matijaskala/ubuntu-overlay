@@ -8,11 +8,11 @@ VALA_MIN_API_VERSION=0.16
 VALA_USE_DEPEND=vapigen
 PYTHON_COMPAT=( python2_7 )
 
-inherit autotools eutils flag-o-matic multilib-minimal python-single-r1 vala
+inherit eutils flag-o-matic multilib-minimal python-single-r1 vala
 
 DESCRIPTION="Library to pass menu structure across DBus"
 HOMEPAGE="https://launchpad.net/dbusmenu"
-MY_PV="${PV/_pre/+15.04.}.2"
+MY_PV="${PV/_pre/+16.04.}.1"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="LGPL-2.1 LGPL-3"
@@ -46,8 +46,6 @@ src_prepare() {
 	python_fix_shebang tools
 
 	epatch_user
-
-	eautoreconf
 }
 
 multilib_src_configure() {
@@ -57,7 +55,6 @@ multilib_src_configure() {
 		--disable-gtk
 		--disable-static
 		--disable-silent-rules
-		--disable-scrollkeeper
 		$(use_enable json tests)
 		--disable-dumper
 		$(multilib_native_use_enable introspection)
