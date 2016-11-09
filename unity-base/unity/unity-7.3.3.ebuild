@@ -25,39 +25,25 @@ RESTRICT="mirror"
 
 COMMONDEPEND="
 	dev-libs/dee:=
-	dev-libs/dbus-glib
-	dev-libs/libappindicator
 	dev-libs/libdbusmenu:=
-	dev-libs/libindicate[gtk,introspection]
-	dev-libs/libindicate-qt
-	dev-libs/libindicator
-	dev-libs/libunity
+	dev-libs/libindicator:=
+	dev-libs/libunity:=
 	dev-libs/libunity-misc:=
 	dev-libs/xpathselect
-	dev-python/gconf-python
-	gnome-base/gconf
-	app-text/yelp-tools
 	gnome-base/gnome-desktop:3=
-	gnome-base/gnome-menus:3
 	gnome-base/gnome-session
 	gnome-base/gsettings-desktop-schemas
 	gnome-extra/zeitgeist
-	media-libs/clutter-gtk:1.0
 	media-libs/glew:=
-	sys-apps/dbus
 	sys-apps/upstart
 	sys-auth/pambase
-	sys-libs/libnih[dbus]
 	unity-base/compiz:=
 	unity-base/dconf-qt
 	unity-base/nux:=
 	unity-base/overlay-scrollbar
 	unity-base/unity-gtk-module
 	virtual/pam
-	x11-misc/appmenu-qt
-	x11-misc/appmenu-qt5
 	x11-libs/bamf:=
-	x11-base/xorg-server[dmx]
 	>=x11-libs/cairo-1.13.1
 	x11-libs/libXfixes
 	x11-libs/startup-notification
@@ -73,6 +59,10 @@ RDEPEND="$COMMONDEPEND
 "
 DEPEND="$COMMONDEPEND
 	dev-libs/boost:=
+	dev-libs/libappindicator
+	dev-libs/libindicate[gtk,introspection]
+	dev-libs/libindicate-qt
+	app-text/yelp-tools
 	doc? ( app-doc/doxygen )
 	test? ( dev-cpp/gmock
 		dev-cpp/gtest
