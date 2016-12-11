@@ -26,7 +26,7 @@ RESTRICT="mirror"
 COMMONDEPEND="
 	dev-libs/dee:=
 	dev-libs/libdbusmenu:=
-	dev-libs/libindicator:=
+	dev-libs/libindicator:3=
 	dev-libs/libunity-misc:=
 	dev-libs/xpathselect
 	gnome-base/gnome-desktop:3=
