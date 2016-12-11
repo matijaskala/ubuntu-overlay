@@ -27,7 +27,6 @@ COMMONDEPEND="
 	dev-libs/dee:=
 	dev-libs/libdbusmenu:=
 	dev-libs/libindicator:=
-	dev-libs/libunity:=
 	dev-libs/libunity-misc:=
 	dev-libs/xpathselect
 	gnome-base/gnome-desktop:3=
