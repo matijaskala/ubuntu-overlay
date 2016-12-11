@@ -52,6 +52,8 @@ RDEPEND="$COMMONDEPEND
 	unity-base/unity-settings-daemon
 	unity-base/gsettings-ubuntu-touch-schemas
 	unity-base/unity-language-pack
+	x11-misc/appmenu-qt
+	x11-misc/appmenu-qt5
 	x11-themes/humanity-icon-theme
 	x11-themes/gtk-engines-murrine
 	x11-themes/unity-asset-pool
