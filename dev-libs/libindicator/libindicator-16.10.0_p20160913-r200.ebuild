@@ -14,7 +14,7 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="test"
-S=${WORKDIR}/${PN}
+S=${WORKDIR}
 RESTRICT="mirror"
 
 RDEPEND=">=dev-libs/glib-2.37[${MULTILIB_USEDEP}]
