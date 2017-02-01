@@ -1,34 +1,32 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
-GCONF_DEBUG="no"
+EAPI=6
 GNOME2_LA_PUNT="yes" # Needed with USE 'sendto'
 
-inherit autotools base eutils gnome2 readme.gentoo virtualx
+inherit autotools gnome2 readme.gentoo-r1 virtualx
 
 DESCRIPTION="A file manager for the GNOME desktop patched for the Unity desktop"
 HOMEPAGE="https://wiki.gnome.org/Apps/Nautilus"
 
 LICENSE="GPL-2+ LGPL-2+ FDL-1.1"
 SLOT="0"
+IUSE="exif gnome +introspection packagekit +previewer selinux sendto tracker xmp"
 
-# profiling?
-IUSE="exif gnome +introspection packagekit +previewer sendto tracker xmp"
-KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sh ~sparc ~x86 ~x86-fbsd ~x86-interix ~amd64-linux ~arm-linux ~x86-linux"
+KEYWORDS="~alpha amd64 ~arm ~ia64 ~ppc ~ppc64 ~sh ~sparc x86 ~x86-fbsd ~amd64-linux ~arm-linux ~x86-linux"
 
 # FIXME: tests fails under Xvfb, but pass when building manually
 # "FAIL: check failed in nautilus-file.c, line 8307"
+# need org.gnome.SessionManager service (aka gnome-session) but cannot find it
 RESTRICT="test"
 
-# FIXME: selinux support is automagic
 # Require {glib,gdbus-codegen}-2.30.0 due to GDBus API changes between 2.29.92
 # and 2.30.0
 COMMON_DEPEND="
 	>=dev-libs/glib-2.45.7:2[dbus]
 	>=x11-libs/pango-1.28.3
-	>=x11-libs/gtk+-3.17.5:3[introspection?]
+	>=x11-libs/gtk+-3.19.12:3[introspection?]
 	>=dev-libs/libxml2-2.7.8:2
 	>=gnome-base/gnome-desktop-3:3=
 
@@ -43,6 +41,7 @@ COMMON_DEPEND="
 
 	exif? ( >=media-libs/libexif-0.6.20 )
 	introspection? ( >=dev-libs/gobject-introspection-0.6.4:= )
+	selinux? ( >=sys-libs/libselinux-2 )
 	tracker? ( >=app-misc/tracker-0.16:= )
 	xmp? ( >=media-libs/exempi-2.1.0 )
 "
@@ -50,11 +49,11 @@ DEPEND="${COMMON_DEPEND}
 	>=dev-lang/perl-5
 	>=dev-util/gdbus-codegen-2.33
 	>=dev-util/gtk-doc-am-1.10
-	>=dev-util/intltool-0.40.1
+	>=dev-util/intltool-0.50
 	sys-devel/gettext
 	virtual/pkgconfig
 	x11-proto/xproto
-	dev-libs/libzeitgeist
+	gnome-extra/zeitgeist
 "
 RDEPEND="${COMMON_DEPEND}
 	packagekit? ( app-admin/packagekit-base )
@@ -66,9 +65,7 @@ RDEPEND="${COMMON_DEPEND}
 #	dev-util/gtk-doc-am"
 
 PDEPEND="
-	gnome? (
-		>=x11-themes/gnome-icon-theme-1.1.91
-		x11-themes/gnome-icon-theme-symbolic )
+	gnome? ( x11-themes/adwaita-icon-theme )
 	tracker? ( >=gnome-extra/nautilus-tracker-tags-0.12 )
 	previewer? ( >=gnome-extra/sushi-0.1.9 )
 	sendto? ( >=gnome-extra/nautilus-sendto-3.0.1 )
@@ -81,19 +78,14 @@ src_prepare() {
 	for patch in $(cat "${FILESDIR}/patches/series" | grep -v '#'); do
 		PATCHES+=( "${FILESDIR}/patches/${patch}" )
 	done
-	base_src_prepare
-	eautoreconf
+	default
 
 	if use previewer; then
 		DOC_CONTENTS="nautilus uses gnome-extra/sushi to preview media files.
 			To activate the previewer, select a file and press space; to
 			close the previewer, press space again."
 	fi
-
-	# Remove -D*DEPRECATED flags. Don't leave this for eclass! (bug #448822)
-	sed -e 's/DISABLE_DEPRECATED_CFLAGS=.*/DISABLE_DEPRECATED_CFLAGS=/' \
-		-i configure || die "sed failed"
-
+	eautoreconf
 	gnome2_src_prepare
 }
 
@@ -106,16 +98,13 @@ src_configure() {
 		$(use_enable introspection) \
 		$(use_enable packagekit) \
 		$(use_enable sendto nst-extension) \
+		$(use_enable selinux) \
 		$(use_enable tracker) \
 		$(use_enable xmp)
 }
 
 src_test() {
-	gnome2_environment_reset
-	unset DBUS_SESSION_BUS_ADDRESS
-	export GSETTINGS_BACKEND="memory"
-	Xemake check
-	unset GSETTINGS_BACKEND
+	virtx emake check
 }
 
 src_install() {
