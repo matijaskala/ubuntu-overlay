@@ -1,29 +1,26 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Id$
 
-EAPI=5
-GNOME2_LA_PUNT="yes"
-GCONF_DEBUG="yes"
-PYTHON_COMPAT=( python2_7 )
+EAPI=6
+PYTHON_COMPAT=( python3_4 )
 DISTUTILS_SINGLE_IMPL=1
 
-inherit base cmake-utils distutils-r1 eutils gnome2 pam toolchain-funcs
+inherit cmake-utils distutils-r1 eutils gnome2 pam toolchain-funcs
 
 DESCRIPTION="The Ubuntu Unity Desktop"
 HOMEPAGE="https://launchpad.net/unity"
-MY_PV="${PV/_pre/+16.04.}"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
-SRC_URI="https://launchpad.net/${PN}/7.3/${PV}/+download/${P}.tar.bz2"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+17.04.}.orig.tar.gz"
+#SRC_URI="https://launchpad.net/${PN}/7.5/${PV}/+download/${P}.tar.bz2"
 
 LICENSE="GPL-3 LGPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="doc pch test"
-S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
+S=${WORKDIR}
 
-COMMONDEPEND="
+COMMON_DEPEND=">=sys-apps/systemd-232
 	dev-libs/dee:=
 	dev-libs/libdbusmenu:=
 	dev-libs/libindicator:3=
@@ -47,7 +44,7 @@ COMMONDEPEND="
 	x11-libs/libXfixes
 	x11-libs/startup-notification
 "
-RDEPEND="$COMMONDEPEND
+RDEPEND="${COMMON_DEPEND}
 	unity-base/unity-control-center
 	unity-base/unity-settings-daemon
 	unity-base/gsettings-ubuntu-touch-schemas
@@ -58,7 +55,7 @@ RDEPEND="$COMMONDEPEND
 	x11-themes/gtk-engines-murrine
 	x11-themes/unity-asset-pool
 "
-DEPEND="$COMMONDEPEND
+DEPEND="${COMMON_DEPEND}
 	dev-libs/boost:=
 	dev-libs/libappindicator
 	dev-libs/libindicate[gtk,introspection]
@@ -76,32 +73,28 @@ src_prepare() {
 		## Disable source trying to run it's own dummy-xorg-test-runner.sh script ##
 		sed -e 's:set (DUMMY_XORG_TEST_RUNNER.*:set (DUMMY_XORG_TEST_RUNNER /bin/true):g' \
 			-i tests/CMakeLists.txt
-	else
-		PATCHES+=( "${FILESDIR}/unity-7.1.0_remove-gtest-dep.diff" )
 	fi
-
+	default
 
 	# Taken from http://ppa.launchpad.net/timekiller/unity-systrayfix/ubuntu/pool/main/u/unity/ #
-	epatch -p1 "${FILESDIR}/systray-fix_saucy.diff"
-
-	base_src_prepare
+		epatch -p1 "${FILESDIR}/systray-fix_saucy.diff"
 
 	# Setup Unity side launcher default applications #
 	sed \
 		-e '/amazon/d' \
 		-e '/software-center/d' \
 		-e 's:nautilus.desktop:org.gnome.Nautilus.desktop:' \
-			-i com.canonical.Unity.gschema.xml || die
+			-i data/com.canonical.Unity.gschema.xml || die
 
 	sed -e "s:/desktop:/org/unity/desktop:g" \
-		-i com.canonical.Unity.gschema.xml || die
+		-i data/com.canonical.Unity.gschema.xml || die
 
 	sed -e "s:Ubuntu Desktop:Unity Gentoo Desktop:g" \
 		-i panel/PanelMenuView.cpp || die
 
 	# Remove testsuite cmake installation #
-	sed -e '/python setup.py install/d' \
-			-i tests/CMakeLists.txt
+	sed -e '/setup.py install/d' \
+			-i tests/CMakeLists.txt || die "Sed failed for tests/CMakeLists.txt"
 
 	# Unset CMAKE_BUILD_TYPE env variable so that cmake-utils.eclass doesn't try to 'append-cppflags -DNDEBUG' #
 	#       resulting in build failure with 'fatal error: unitycore_pch.hh: No such file or directory' #
@@ -114,43 +107,63 @@ src_prepare() {
 	sed \
 		-e 's:.*"stop", "unity-panel-service".*:        subprocess.call(["pkill -e unity-panel-service"], shell=True):' \
 		-e 's:.*"start", "unity-panel-service".*:        subprocess.call(["/usr/lib/unity/unity-panel-service"], shell=True):' \
-			-i tools/unity.cmake
+			-i tools/unity.cmake || die "Sed failed for tools/unity.cmake"
 
 	# Don't kill -9 unity-panel-service when launched using PANEL_USE_LOCAL_SERVICE env variable #
 	#  It slows down the launch of unity-panel-service in lockscreen mode #
 	sed -e '/killall -9 unity-panel-service/,+1d' \
-		-i UnityCore/DBusIndicators.cpp
+		-i UnityCore/DBusIndicators.cpp || die "Sed failed for UnityCore/DBusIndicators.cpp"
 
 	# Include directly iostream needed for std::cout #
 	sed -e 's/.*<fstream>.*/#include <iostream>\n&/' \
-		-i unity-shared/DebugDBusInterface.cpp
+		-i unity-shared/DebugDBusInterface.cpp || die "Sed failed for unity-shared/DebugDBusInterface.cpp"
+
+	# DESKTOP_SESSION and SESSION is 'unity' not 'ubuntu' #
+	sed -e 's:SESSION=ubuntu:SESSION=unity:g' \
+		-e 's:ubuntu-session:unity-session:g' \
+			-i {data/unity7.conf.in,data/unity7.service.in,services/unity-panel-service.conf.in} || \
+				die "Sed failed for {data/unity7.conf.in,services/unity-panel-service.conf.in}"
+	sed -e 's:ubuntu.session:unity.session:g' \
+		-i tools/{systemd,upstart}-prestart-check || \
+			die "Sed failed for tools/{systemd,upstart}-prestart-check"
+
+	#  'After=graphical-session-pre.target' must be explicitly set in the unit files that require it #
+	#  Relying on the upstart job /usr/share/upstart/systemd-session/upstart/systemd-graphical-session.conf #
+	#       to create "$XDG_RUNTIME_DIR/systemd/user/${unit}.d/graphical-session-pre.conf" drop-in units #
+	#       results in weird race problems on desktop logout where the reliant desktop services #
+	#       stop in a different jumbled order each time #
+	sed -e 's:Requires=unity-settings-daemon.service:Requires=gnome-session.service unity-settings-daemon.service:g' \
+		-e 's:After=unity-settings-daemon.service:After=graphical-session-pre.target gnome-session.service bamfdaemon.service unity-settings-daemon.service:g' \
+			-i data/unity7.service.in || \
+				die "Sed failed for data/unity7.service.in"
+
+	cmake-utils_src_prepare
 }
 
 src_configure() {
 	if use test; then
-		mycmakeargs="${mycmakeargs}
-			-DBUILD_XORG_GTEST=ON
-			-DCOMPIZ_BUILD_TESTING=ON"
+		mycmakeargs+=(-DBUILD_XORG_GTEST=ON
+			-DCOMPIZ_BUILD_TESTING=ON
+			-DENABLE_UNIT_TESTS=ON)
 	else
-		mycmakeargs="${mycmakeargs}
-			-DBUILD_XORG_GTEST=OFF
-			-DCOMPIZ_BUILD_TESTING=OFF"
+		mycmakeargs+=(-DBUILD_XORG_GTEST=OFF
+			-DCOMPIZ_BUILD_TESTING=OFF
+			-DENABLE_UNIT_TESTS=OFF)
 	fi
 
 	if use pch; then
-		mycmakeargs="${mycmakeargs} -Duse_pch=ON"
+		mycmakeargs+=(-Duse_pch=ON)
 	else
-		mycmakeargs="${mycmakeargs} -Duse_pch=OFF"
+		mycmakeargs+=(-Duse_pch=OFF)
 	fi
 
-	mycmakeargs="${mycmakeargs}
-		-DCOMPIZ_BUILD_WITH_RPATH=FALSE
+	mycmakeargs+=(-DCOMPIZ_BUILD_WITH_RPATH=FALSE
 		-DCOMPIZ_PACKAGING_ENABLED=TRUE
 		-DCOMPIZ_PLUGIN_INSTALL_TYPE=package
 		-DCOMPIZ_INSTALL_GCONF_SCHEMA_DIR=/etc/gconf/schemas
 		-DUSE_GSETTINGS=TRUE
 		-DCMAKE_INSTALL_PREFIX=/usr
-		-DCMAKE_SYSCONFDIR=/etc"
+		-DCMAKE_SYSCONFDIR=/etc)
 	cmake-utils_src_configure || die
 }
 
@@ -160,6 +173,11 @@ src_compile() {
 			distutils-r1_src_compile
 		popd
 	fi
+
+	# 'make translations' is sometimes not parallel make safe #
+	pushd ${CMAKE_BUILD_DIR}
+		emake -j1 translations
+	popd
 	cmake-utils_src_compile || die
 }
 
@@ -192,25 +210,30 @@ src_install() {
 	#  due to being provided by Ubuntu's language-pack packages #
 	rm -rf "${ED}usr/share/locale"
 
-	# Remove upstart jobs as we use xsession based scripts in /etc/X11/xinit/xinitrc.d/ #
-	rm -rf "${ED}usr/share/upstart"
+	exeinto /etc/X11/xinit/xinitrc.d/
+	doexe "${FILESDIR}/99ibus-service"
 
-	insinto /etc/xdg/autostart
-	doins "${FILESDIR}/unity-panel-service.desktop"
 
-	insinto /usr/share/dbus-1/services/
-	doins "${FILESDIR}/com.canonical.Unity.Panel.Service.Desktop.service"
-	doins "${FILESDIR}/com.canonical.Unity.Panel.Service.LockScreen.service"
-
-	# Allow zeitgeist-fts to find KDE *.desktop files, so that KDE applications show in Dash 'Recently Used' #
-	#  (refer https://developer.gnome.org/gio/2.33/gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-new)
+	# Allow zeitgeist-fts to find KDE *.desktop files, so that KDE applications show in Dash 'Recently Used' (see LP# 1251915) #
+	#  (refer https://developer.gnome.org/gio/stable/gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-new)
+	#	This has the unwanted side effect of creating duplicate entries for KDE applications in the Search and Applications lense #
 	dosym /usr/share/applications/kde4/ /usr/share/kde4/applications
 	insinto /etc/X11/xinit/xinitrc.d
 	doins "${FILESDIR}/15-xdg-data-kde"
 
 	# Clean up pam file installation as used in lockscreen (LP# 1305440) #
-	rm "${ED}etc/pam.d/${PN}"
+	rm -rf "${ED}usr/etc/pam.d"
 	pamd_mimic system-local-login ${PN} auth account session
+
+	# Set base desktop user privileges #
+	insinto /var/lib/polkit-1/localauthority/10-vendor.d
+	doins "${FILESDIR}/com.ubuntu.desktop.pkla"
+	fowners root:polkitd /var/lib/polkit-1/localauthority/10-vendor.d/com.ubuntu.desktop.pkla
+
+	# Make 'unity-session.target' systemd user unit auto-start 'unity7.service' #
+	dosym $(systemd_get_userunitdir)/unity7.service $(systemd_get_userunitdir)/unity-session.target.requires/unity7.service
+	dosym $(systemd_get_userunitdir)/unity-gtk-module.service $(systemd_get_userunitdir)/unity-session.target.wants/unity-gtk-module.service
+	dosym $(systemd_get_userunitdir)/unity-settings-daemon.service $(systemd_get_userunitdir)/unity-session.target.wants/unity-settings-daemon.service
 }
 
 pkg_postinst() {
