@@ -1,16 +1,15 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Id$
 
-EAPI=5
-GCONF_DEBUG="no"
+EAPI=6
 PYTHON_COMPAT=( python2_7 )
 
-inherit base gnome2 cmake-utils eutils python-r1
+inherit gnome2 cmake-utils eutils python-r1
 
 DESCRIPTION="OpenGL window and compositing manager patched for the Unity desktop"
 HOMEPAGE="https://launchpad.net/compiz"
-MY_PV="${PV/_pre/+15.10.}"
+MY_PV="${PV/_p/+17.04.}"
 UURL="https://launchpad.net/ubuntu/+archive/primary/+files"
 SRC_URI="${UURL}/${PN}_${MY_PV}.orig.tar.gz
 	${UURL}/${PN}_${MY_PV}-0ubuntu1.diff.gz"
@@ -21,7 +20,7 @@ KEYWORDS="amd64 x86"
 IUSE="kde test"
 RESTRICT="mirror"
 
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}
 
 COMMONDEPEND="!!x11-wm/compiz
 	!!x11-wm/compiz-fusion
@@ -88,12 +87,15 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# Ubuntu patchset #
 	epatch -p1 "${WORKDIR}/${PN}_${MY_PV}-0ubuntu1.diff"        # This needs to be applied for the debian/ directory to be present #
-	for patch in $(cat "${S}/debian/patches/series" | grep -v '#'); do
-		PATCHES+=( "${S}/debian/patches/${patch}" )
-	done
-	base_src_prepare
+
+	# 'python-copy-sources' will not work if S="${WORKDIR}" because it bails if 'cp' prints anything to stderr #
+	#	(the 'cp' command works but prints "cp: cannot copy a directory into itself" to stderr) #
+	# Workaround by changing into a re-defined "${S}" #
+	mkdir "${WORKDIR}/${P}"
+	mv "${WORKDIR}"/* "${WORKDIR}/${P}" &> /dev/null
+	export S="${WORKDIR}/${P}"
+	cd "${S}"
 
 	# Set DESKTOP_SESSION so correct profile and it's plugins get loaded at Xsession start #
 	sed -e 's:xubuntu:xunity:g' \
@@ -111,24 +113,20 @@ src_prepare() {
 	sed -e 's:-Werror::g' \
 		-i cmake/CompizCommon.cmake || die
 
-	# Disable gconftool-2 from being used (need to differentiate here so gsettings schemas will still be installed) #
-	sed -e 's:COMPIZ_DISABLE_SCHEMAS_INSTALL:COMPIZ_DISABLE_GCONF_SCHEMAS_INSTALL:g' \
-		-i cmake/{CompizGconf,plugin_extensions/CompizGenGconf}.cmake || die
-
 	# Need to do a 'python_foreach_impl' run from python-r1 eclass to workaround corrupt generated python shebang for /usr/bin/ccsm #
 	#  Due to the way CMake invokes distutils setup.py, shebang will be inherited from the sandbox leading to runtime failure #
 	python_copy_sources
+	cmake-utils_src_prepare
 }
 
 src_configure() {
 	use kde && \
-		mycmakeargs="${mycmakeargs} -DUSE_KDE4=ON" || \
-		mycmakeargs="${mycmakeargs} -DUSE_KDE4=OFF"
+		mycmakeargs+=(-DUSE_KDE4=ON) || \
+		mycmakeargs+=(-DUSE_KDE4=OFF)
 	use test && \
-		mycmakeargs="${mycmakeargs} -DCOMPIZ_BUILD_TESTING=ON" || \
-		mycmakeargs="${mycmakeargs} -DCOMPIZ_BUILD_TESTING=OFF"
-
-	mycmakeargs="${mycmakeargs}
+		mycmakeargs+=(-DCOMPIZ_BUILD_TESTING=ON) || \
+		mycmakeargs+=(-DCOMPIZ_BUILD_TESTING=OFF)
+	mycmakeargs+=(
 		-DCMAKE_INSTALL_PREFIX="/usr"
 		-DCOMPIZ_INSTALL_GCONF_SCHEMA_DIR="/etc/gconf/schemas"
 		-DCOMPIZ_DISABLE_GCONF_SCHEMAS_INSTALL=TRUE
@@ -137,8 +135,7 @@ src_configure() {
 		-DUSE_GCONF=OFF
 		-DUSE_GSETTINGS=ON
 		-DCOMPIZ_DISABLE_GS_SCHEMAS_INSTALL=OFF
-		-DCOMPIZ_DEFAULT_PLUGINS="ccp"
-		"
+		-DCOMPIZ_DEFAULT_PLUGINS="ccp")
 	configuration() {
 		cmake-utils_src_configure
 	}
@@ -194,9 +191,9 @@ src_install() {
 		insinto /usr/lib/compiz/migration/
 		doins postinst/convert-files/*.convert
 
-		# Default GConf settings #
-		insinto /usr/share/gconf/defaults
-		newins debian/compiz-gnome.gconf-defaults 10_compiz-gnome
+#		# Default GConf settings #
+#		insinto /usr/share/gconf/defaults
+#		newins debian/compiz-gnome.gconf-defaults 10_compiz-gnome
 
 		# Default GSettings settings #
 		insinto /usr/share/glib-2.0/schemas
