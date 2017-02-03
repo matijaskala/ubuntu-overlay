@@ -9,8 +9,7 @@ inherit autotools eutils vala python-single-r1
 
 DESCRIPTION="BAMF Application Matching Framework"
 HOMEPAGE="https://launchpad.net/bamf"
-MY_PV="${PV/_pre/~bzr0+16.04.}"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+16.10.}.orig.tar.gz"
 
 LICENSE="LGPL-3"
 SLOT="0"
@@ -30,9 +29,10 @@ DEPEND="${RDEPEND}
 	dev-util/gtk-doc-am
 	virtual/pkgconfig"
 
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}
 
 src_prepare() {
+	eapply_user
 	vala_src_prepare
 	export VALA_API_GEN=$VAPIGEN
 
@@ -43,6 +43,7 @@ src_prepare() {
 
 src_configure() {
 	econf \
+		--enable-export-actions-menu=yes \
 		--enable-introspection=yes \
 		--disable-static || die
 }
