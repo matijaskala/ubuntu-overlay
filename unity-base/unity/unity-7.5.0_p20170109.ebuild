@@ -16,7 +16,7 @@ SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+17.
 LICENSE="GPL-3 LGPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="doc pch test"
+IUSE="debug doc pch test"
 RESTRICT="mirror"
 S=${WORKDIR}
 
@@ -74,7 +74,6 @@ src_prepare() {
 		sed -e 's:set (DUMMY_XORG_TEST_RUNNER.*:set (DUMMY_XORG_TEST_RUNNER /bin/true):g' \
 			-i tests/CMakeLists.txt
 	fi
-	default
 
 	# Taken from http://ppa.launchpad.net/timekiller/unity-systrayfix/ubuntu/pool/main/u/unity/ #
 		epatch -p1 "${FILESDIR}/systray-fix_saucy.diff"
