@@ -9,14 +9,13 @@ inherit autotools eutils python-r1
 
 DESCRIPTION="GTK+ module for exporting old-style menus as GMenuModels"
 HOMEPAGE="https://launchpad.net/unity-gtk-module"
-MY_PV="${PV/_pre/+15.04.}"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+16.10.}.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 IUSE=""
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}
 RESTRICT="mirror"
 
 RDEPEND=">=dev-libs/glib-2.38
@@ -27,6 +26,8 @@ RDEPEND=">=dev-libs/glib-2.38
 DEPEND="${RDEPEND}"
 
 src_prepare() {
+	default
+	epatch "${FILESDIR}/unity-gtk-module-0.0.0+14.04-deprecated-api.patch"
 	eautoreconf
 }
 
@@ -71,9 +72,6 @@ src_install() {
 	pushd build-gtk3
 		emake DESTDIR="${D}" install || die
 	popd
-
-	exeinto /etc/X11/xinit/xinitrc.d/
-	doexe "${FILESDIR}/81unity-gtk-module"
 
 	prune_libtool_files --modules
 }
