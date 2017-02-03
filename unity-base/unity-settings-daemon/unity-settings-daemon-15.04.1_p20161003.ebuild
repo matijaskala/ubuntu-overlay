@@ -1,6 +1,6 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Id$
 
 EAPI="5"
 GNOME2_LA_PUNT="yes"
@@ -10,7 +10,7 @@ inherit autotools base eutils flag-o-matic gnome2 virtualx
 
 DESCRIPTION="Unity Settings Daemon"
 HOMEPAGE="https://launchpad.net/unity-settings-daemon"
-MY_PV="${PV/_pre/+15.10.}"
+MY_PV="${PV/_p/+16.10.}"
 UURL="https://launchpad.net/ubuntu/+archive/primary/+files"
 SRC_URI="${UURL}/${PN}_${MY_PV}.orig.tar.gz
 	${UURL}/${PN}_${MY_PV}-0ubuntu1.diff.gz"
@@ -21,7 +21,7 @@ IUSE="+colord +cups debug fcitx +i18n input_devices_wacom nls packagekit policyk
 KEYWORDS="~amd64 ~x86"
 REQUIRED_USE="packagekit? ( udev )
 		smartcard? ( udev )"
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}
 RESTRICT="mirror"
 
 # require colord-0.1.27 dependency for connection type support
@@ -97,9 +97,19 @@ src_prepare() {
 	# Make colord and wacom optional; requires eautoreconf
 	epatch "${FILESDIR}/${PN}-optional-color-wacom.patch"
 
-	# Correct path to unity-settings-daemon executable in upstart files #
+	# Correct path to unity-settings-daemon executable in upstart and systemd files #
 	sed -e 's:/usr/lib/unity-settings-daemon:/usr/libexec:g' \
-		-i debian/unity-settings-daemon.user-session.{desktop,upstart}
+		-i debian/unity-settings-daemon.user-session.{desktop,upstart} \
+		-i debian/user/unity-settings-daemon.service || die
+
+	#  'After=graphical-session-pre.target' must be explicitly set in the unit files that require it #
+	#  Relying on the upstart job /usr/share/upstart/systemd-session/upstart/systemd-graphical-session.conf #
+	#       to create "$XDG_RUNTIME_DIR/systemd/user/${unit}.d/graphical-session-pre.conf" drop-in units #
+	#       results in weird race problems on desktop logout where the reliant desktop services #
+	#       stop in a different jumbled order each time #
+	sed -e '/PartOf=/i After=graphical-session-pre.target' \
+		-i debian/user/unity-settings-daemon.service || \
+			die "Sed failed for debian/user/unity-settings-daemon.service"
 
 	eautoreconf
 	gnome2_src_prepare
@@ -150,6 +160,12 @@ src_install() {
 	newins debian/unity-settings-daemon.user-session.desktop unity-settings-daemon.desktop
 	insinto /usr/share/upstart/sessions/
 	newins debian/unity-settings-daemon.user-session.upstart unity-settings-daemon.conf
+
+	# Install systemd units #
+	insinto /usr/lib/systemd/user
+	doins debian/user/unity-settings-daemon.service
+	insinto /usr/share/upstart/systemd-session/upstart
+	doins debian/user/unity-settings-daemon.override
 
 	prune_libtool_files --modules
 }
