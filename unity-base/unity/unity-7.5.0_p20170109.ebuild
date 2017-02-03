@@ -6,7 +6,7 @@ EAPI=6
 PYTHON_COMPAT=( python3_4 )
 DISTUTILS_SINGLE_IMPL=1
 
-inherit cmake-utils distutils-r1 eutils gnome2 pam toolchain-funcs
+inherit cmake-utils distutils-r1 eutils gnome2-utils pam systemd toolchain-funcs
 
 DESCRIPTION="The Ubuntu Unity Desktop"
 HOMEPAGE="https://launchpad.net/unity"
@@ -235,8 +235,12 @@ src_install() {
 	dosym $(systemd_get_userunitdir)/unity-settings-daemon.service $(systemd_get_userunitdir)/unity-session.target.wants/unity-settings-daemon.service
 }
 
+pkg_preinst() {
+        gnome2_schemas_savelist
+}
+
 pkg_postinst() {
-	elog
+	gnome2_schemas_update
 	elog "If you use a custom ~/.xinitrc to startx"
 	elog "then you should add the following to the top of your ~/.xinitrc file"
 	elog "to ensure all needed services are started:"
@@ -254,7 +258,6 @@ pkg_postinst() {
 	elog
 	elog "If you would like to use Unity's icons and themes"
 	elog "select the Ambiance theme in 'System Settings > Appearance'"
-	elog
 
 	if use test; then
 		elog "To run autopilot tests, do the following:"
@@ -262,6 +265,8 @@ pkg_postinst() {
 		elog "and run 'autopilot run unity'"
 		elog
 	fi
+}
 
-	gnome2_pkg_postinst
+pkg_postrm() {
+	gnome2_schemas_update
 }
