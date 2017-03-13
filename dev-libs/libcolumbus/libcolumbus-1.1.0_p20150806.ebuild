@@ -1,15 +1,14 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
-PYTHON_COMPAT=( python{3_3,3_4} )
+EAPI=6
+PYTHON_COMPAT=( python{3_3,3_4,3_5} )
 
 inherit cmake-utils eutils python-r1
 
 DESCRIPTION="Error tolerant matching engine used by the Unity desktop"
 HOMEPAGE="https://launchpad.net/libcolumbus"
-MY_PV=${PV/_pre/+15.10.}
+MY_PV=${PV/_p/+15.10.}
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-2"
@@ -21,7 +20,7 @@ S=${WORKDIR}/${PN}-${MY_PV}
 RESTRICT="mirror"
 
 DEPEND="dev-cpp/sparsehash
-	dev-libs/boost[${PYTHON_USEDEP}]
+	dev-libs/boost:=[${PYTHON_USEDEP}]
 	>=dev-libs/icu-52:=
 	${PYTHON_DEPS}"
 
@@ -44,9 +43,7 @@ src_prepare() {
 
 src_configure() {
 	configuration() {
-		mycmakeargs="${mycmakeargs}
-			-DPYTHONDIR="$(python_get_sitedir)"
-			"
+		mycmakeargs+=(-DPYTHONDIR="$(python_get_sitedir)")
 		cmake-utils_src_configure
 	}
 	python_foreach_impl run_in_build_dir configuration
