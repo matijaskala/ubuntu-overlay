@@ -5,9 +5,9 @@ EAPI=6
 
 inherit eutils gnome2-utils
 MY_P="${PN}_${PV}"
-UVER="4ubuntu1"
+UVER="1ubuntu2.1"
 
-UURL="mirror://ubuntu/pool/main/m/${PN}"
+UURL="https://launchpad.net/ubuntu/+archive/primary/+files"
 
 DESCRIPTION="GNOME default window manager"
 HOMEPAGE="http://blogs.gnome.org/metacity/"
