@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -8,7 +7,7 @@ VALA_MIN_API_VERSION=0.16
 VALA_USE_DEPEND=vapigen
 PYTHON_COMPAT=( python2_7 )
 
-inherit eutils flag-o-matic multilib-minimal python-single-r1 vala
+inherit autotools eutils flag-o-matic multilib-minimal python-single-r1 vala
 
 DESCRIPTION="Library to pass menu structure across DBus"
 HOMEPAGE="https://launchpad.net/dbusmenu"
@@ -46,7 +45,8 @@ src_prepare() {
 	fi
 	python_fix_shebang tools
 
-	epatch_user
+	eapply_user
+	eautoreconf
 }
 
 multilib_src_configure() {
