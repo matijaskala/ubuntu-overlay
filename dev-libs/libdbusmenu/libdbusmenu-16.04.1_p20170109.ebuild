@@ -11,7 +11,7 @@ inherit autotools eutils flag-o-matic multilib-minimal python-single-r1 vala
 
 DESCRIPTION="Library to pass menu structure across DBus"
 HOMEPAGE="https://launchpad.net/dbusmenu"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+16.10.}.2.orig.tar.gz"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+17.04.}.1.orig.tar.gz"
 
 LICENSE="LGPL-2.1 LGPL-3"
 SLOT="0"
