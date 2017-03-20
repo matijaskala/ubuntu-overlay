@@ -1,11 +1,11 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
+GNOME2_EAUTORECONF="yes"
 GNOME2_LA_PUNT="yes" # Needed with USE 'sendto'
 
-inherit autotools gnome2 readme.gentoo-r1 virtualx
+inherit gnome2 readme.gentoo-r1 virtualx
 
 DESCRIPTION="A file manager for the GNOME desktop patched for the Unity desktop"
 HOMEPAGE="https://wiki.gnome.org/Apps/Nautilus"
@@ -78,19 +78,16 @@ src_prepare() {
 	for patch in $(cat "${FILESDIR}/patches/series" | grep -v '#'); do
 		PATCHES+=( "${FILESDIR}/patches/${patch}" )
 	done
-	default
 
 	if use previewer; then
 		DOC_CONTENTS="nautilus uses gnome-extra/sushi to preview media files.
 			To activate the previewer, select a file and press space; to
 			close the previewer, press space again."
 	fi
-	eautoreconf
 	gnome2_src_prepare
 }
 
 src_configure() {
-	DOCS="AUTHORS HACKING MAINTAINERS NEWS README* THANKS"
 	gnome2_src_configure \
 		--disable-profiling \
 		--disable-update-mimedb \
