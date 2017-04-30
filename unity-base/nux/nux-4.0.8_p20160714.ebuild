@@ -1,30 +1,29 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
+EAPI=6
 
 inherit autotools eutils
 
 DESCRIPTION="Visual rendering toolkit for the Unity desktop"
 HOMEPAGE="http://launchpad.net/nux"
-MY_PV="${PV/_pre/+14.10.}"
+MY_PV="${PV/_p/+16.10.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3 LGPL-3"
 SLOT="0/4"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
-S=${WORKDIR}/${PN}-${MY_PV}
+IUSE="test"
+S=${WORKDIR}
 RESTRICT="mirror"
 
-RDEPEND="media-libs/glew:=
-	app-i18n/ibus
-	dev-libs/boost
-	>=dev-libs/glib-2.32.3
+RDEPEND="app-i18n/ibus
+	dev-libs/boost:=
+	dev-libs/glib:2
 	dev-libs/libpcre
 	dev-libs/libsigc++:2
 	gnome-base/gnome-common
+	<media-libs/glew-2.0.0:=
 	media-libs/libpng:0
 	sys-apps/pciutils
 	unity-base/geis
@@ -37,12 +36,19 @@ RDEPEND="media-libs/glew:=
 	x11-proto/dri2proto
 	x11-proto/glproto"
 DEPEND="${RDEPEND}
-	>=sys-devel/gcc-4.7
-	dev-cpp/gmock
-	dev-cpp/gtest"
+	test? ( dev-cpp/gmock
+		dev-cpp/gtest )"
 
 src_prepare() {
 	eautoreconf
+}
+
+src_configure() {
+	! use test && \
+		myconf="${myconf}
+			--enable-tests=no
+			--enable-gputests=no"
+	econf ${myconf}
 }
 
 src_install() {
