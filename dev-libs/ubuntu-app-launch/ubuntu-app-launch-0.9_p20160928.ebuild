@@ -1,37 +1,37 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
+EAPI=6
 
-UPN="ubuntu-app-launch"
 inherit cmake-utils
 
-DESCRIPTION="Session init system job for launching applications, libraries only"
+DESCRIPTION="Session init system job for launching applications"
 HOMEPAGE="https://launchpad.net/ubuntu-app-launch"
-MY_PV="${PV/_pre/+15.10.}"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${UPN}_${MY_PV}.orig.tar.gz"
+MY_PV="${PV/_p/+16.10.}"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+threads"
-S=${WORKDIR}/${UPN}-${MY_PV}
+S=${WORKDIR}
 RESTRICT="mirror"
 
 DEPEND="app-admin/cgmanager
 	dev-libs/glib:2
+	dev-libs/gobject-introspection
 	dev-libs/json-glib
 	dev-libs/libzeitgeist
 	dev-libs/libupstart
-	>=dev-util/lttng-tools-2.5.0
+	dev-util/lttng-tools
 	dev-util/dbus-test-runner
+	mir-base/mir:=
+	net-misc/curl
 	sys-apps/click
+	sys-apps/dbus
 	sys-libs/libnih[dbus]"
+RDEPEND="${DEPEND}"
 
 src_install() {
 	cmake-utils_src_install
-
-	# Only install libraries and includes #
-	rm -rf "${ED}usr/share" "${ED}usr/libexec" "${ED}usr/bin"
 }
