@@ -27,6 +27,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
 src_prepare() {
+	eapply_user
 	eautoreconf
 	append-cflags -Wno-error
 }
