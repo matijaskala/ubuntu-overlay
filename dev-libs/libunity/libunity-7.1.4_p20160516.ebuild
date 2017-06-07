@@ -1,15 +1,14 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
-PYTHON_COMPAT=( python{2_7,3_3,3_4} )
+EAPI=6
+PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
-inherit autotools base python-r1 vala
+inherit autotools python-r1 vala
 
 DESCRIPTION="Library for instrumenting and integrating with all aspects of the Unity shell"
 HOMEPAGE="https://launchpad.net/libunity"
-MY_PV=${PV/_pre/+15.10.}
+MY_PV=${PV/_p/+16.10.}
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
@@ -29,7 +28,7 @@ DEPEND=">=dev-libs/dee-1.2.5:=
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	base_src_prepare
+	default
 	vala_src_prepare
 	export VALA_API_GEN="$VAPIGEN"
 	eautoreconf
