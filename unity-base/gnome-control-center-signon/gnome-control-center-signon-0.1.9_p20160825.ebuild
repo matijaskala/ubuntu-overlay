@@ -1,25 +1,21 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
-GNOME2_LA_PUNT="yes"
-GCONF_DEBUG="yes"
+EAPI=6
 
-inherit autotools eutils gnome2 vala
-
-UVER_PREFIX="~+14.10.20140814"
+inherit autotools eutils gnome2-utils vala
 
 DESCRIPTION="Online account plugin for unity-control-center used by the Unity desktop"
 HOMEPAGE="https://launchpad.net/online-accounts-gnome-control-center"
-MY_PV="${PV/_pre/~+14.10.}"
+MY_PV="${PV/_p/+16.10.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-2+"
 SLOT="0"
 IUSE=""
 KEYWORDS="~amd64 ~x86"
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}
 RESTRICT="mirror"
 
 RDEPEND="net-im/pidgin[-eds,dbus,gadu,groupwise,idn,meanwhile,networkmanager,sasl,silc,zephyr]
@@ -46,6 +42,13 @@ DEPEND="net-libs/libaccounts-glib:=
 MAKEOPTS="${MAKEOPTS} -j1"
 
 src_prepare() {
+	default
+
+	# If a .desktop file does not have inline translations, fall back #
+	#  to calling gettext #
+	find ${WORKDIR} -type f -name "*.desktop*" \
+		-exec sh -c 'sed -i -e "/\[Desktop Entry\]/a X-GNOME-Gettext-Domain=credentials-control-center" "$1"' -- {} \;
+
 	vala_src_prepare
 	eautoreconf
 }
