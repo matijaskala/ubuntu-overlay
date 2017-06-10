@@ -1,50 +1,47 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
-VIRTUALX_REQUIRED="always"
+EAPI=6
 
-inherit qt5-build virtualx
+inherit qmake-utils
 
 DESCRIPTION="Qml bindings for GSettings."
 HOMEPAGE="https://launchpad.net/gsettings-qt"
-MY_PV="${PV/_pre/+14.10.}"
+MY_PV="${PV/_p/+16.04.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="test"
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}
 RESTRICT="mirror"
 
-DEPEND="dev-qt/qtcore:5
+DEPEND="dev-libs/glib:2
+	dev-qt/qtcore:5
 	dev-qt/qtdeclarative:5
-	>=dev-libs/glib-2.38.1"
+	test? ( dev-qt/qttest:5 )"
 
-QT5_BUILD_DIR="${S}"
+unset QT_QPA_PLATFORMTHEME
+MAKEOPTS="${MAKEOPTS} -j1"
 
 src_prepare() {
-	qt5-build_src_prepare
+	default
 
 	# Don't pre-strip
 	echo "CONFIG+=nostrip" >> "${S}"/GSettings/gsettings-qt.pro
 	echo "CONFIG+=nostrip" >> "${S}"/src/gsettings-qt.pro
 	echo "CONFIG+=nostrip" >> "${S}"/tests/tests.pro
 
-	if ! use test; then
-		# remove from build
-		sed -e 's:tests\/tests.pro: :g' \
+	use test || \
+		sed -e 's:tests/tests.pro tests/cpptest.pro::g' \
 			-i "${S}"/gsettings-qt.pro
-	fi
+}
 
+src_configure() {
+	eqmake5
 }
 
 src_install() {
-	# Needs to be run in a virtual Xserver so that qmlplugindump's #
-	#       qmltypes generation can successfully spawn dbus #
-	pushd ${QT5_BUILD_DIR}
-		Xemake INSTALL_ROOT="${ED}" install
-	popd
+	emake INSTALL_ROOT="${ED}" install
 }
