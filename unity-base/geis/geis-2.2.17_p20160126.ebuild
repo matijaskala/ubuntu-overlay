@@ -1,15 +1,14 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
-PYTHON_COMPAT=( python{3_3,3_4} )
+EAPI=6
+PYTHON_COMPAT=( python{3_4,3_5} )
 
 inherit autotools eutils python-r1
 
 DESCRIPTION="An implementation of the GEIS (Gesture Engine Interface and Support) interface"
 HOMEPAGE="https://launchpad.net/geis"
-MY_PV="${PV/_pre/+15.04.}"
+MY_PV="${PV/_p/+16.04.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-2+"
@@ -21,8 +20,10 @@ RESTRICT="mirror"
 
 DEPEND="unity-base/grail
 	${PYTHON_DEPS}"
+RDEPEND="${DEPEND}"
 
 src_prepare() {
+	default
 	eautoreconf
 }
 
