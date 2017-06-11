@@ -1,23 +1,20 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
-VALA_MIN_API_VERSION="0.22"
-VALA_MAX_API_VERSION="0.22"
+EAPI=6
 
 inherit cmake-utils gnome2-utils vala
 
 DESCRIPTION="System sound indicator used by the Unity desktop"
 HOMEPAGE="https://launchpad.net/indicator-sound"
-MY_PV="${PV/_pre/+15.10.}"
+MY_PV="${PV/_p/+17.10.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}
 RESTRICT="mirror"
 
 RDEPEND="dev-libs/libdbusmenu:=
@@ -39,25 +36,20 @@ MAKEOPTS="${MAKEOPTS} -j1"
 src_prepare() {
 	vala_src_prepare
 	export VALA_API_GEN="$VAPIGEN"
-
-	# Make indicator start using XDG autostart #
-	sed -e '/NotShowIn=/d' \
-		-i data/indicator-sound.desktop.in
+	cmake-utils_src_prepare
 }
 
 src_configure() {
-	local mycmakeargs="${mycmakeargs}
-		-DCMAKE_INSTALL_LOCALSTATEDIR=/var
+	mycmakeargs+=(-DCMAKE_INSTALL_LOCALSTATEDIR=/var
 		-DVALA_COMPILER=$VALAC
-		-DVAPI_GEN=$VAPIGEN"
+		-DVAPI_GEN=$VAPIGEN
+		-DCMAKE_INSTALL_FULL_DATADIR=/usr/share)
 	cmake-utils_src_configure
 }
 
 src_install() {
 	cmake-utils_src_install
-
-	# Remove upstart jobs as we use XDG autostart desktop files to spawn indicators #
-	rm -rf "${ED}usr/share/upstart"
+	find "${ED}" -name "*.pkla" -exec chown root:polkitd {} \;
 }
 
 pkg_preinst() {
