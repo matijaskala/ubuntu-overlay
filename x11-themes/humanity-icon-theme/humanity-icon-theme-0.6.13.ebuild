@@ -1,13 +1,12 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=4
+EAPI=6
 inherit gnome2-utils
 
 DESCRIPTION="A nice and well polished icon theme"
 HOMEPAGE="https://launchpad.net/human-icon-theme"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV}.tar.gz"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV}.tar.xz"
 
 LICENSE="CC-BY-SA-3.0"
 SLOT="0"
