@@ -1,9 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
-GNOME2_LA_PUNT="yes"
+EAPI=6
 PYTHON_COMPAT=( python2_7 )
 DISTUTILS_SINGLE_IMPL=1
 
@@ -11,18 +9,17 @@ inherit cmake-utils distutils-r1 flag-o-matic gnome2-utils vala
 
 DESCRIPTION="Backend for the Unity HUD"
 HOMEPAGE="https://launchpad.net/hud"
-MY_PV="${PV/_pre/+15.10.}"
+MY_PV="${PV/_p/+17.04.}.1"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="test"
-S=${WORKDIR}/${PN}-${MY_PV}
+IUSE="doc test"
+S=${WORKDIR}
 RESTRICT="mirror"
 
-DEPEND="
-	dev-cpp/gmock
+DEPEND="dev-cpp/gmock
 	dev-db/sqlite:3
 	dev-libs/dee[${PYTHON_USEDEP}]
 	dev-libs/glib:2[${PYTHON_USEDEP}]
@@ -57,14 +54,18 @@ src_prepare() {
 
 	# disable build of tests
 	sed -i '/add_subdirectory(tests)/d' "${S}/CMakeLists.txt" || die
+
+	default
 }
 
 src_configure() {
-	local mycmakeargs="${mycmakeargs}
-			$(cmake-utils_use_enable test TESTS)
-			-DVALA_COMPILER=$(type -P valac-0.26)
-			-DVAPI_GEN=$(type -P vapigen-0.26)
-			-DCMAKE_INSTALL_DATADIR=/usr/share"
+	mycmakeargs+=( -DENABLE_TESTS="$(usex test)"
+			-DENABLE_DOCUMENTATION="$(usex doc)"
+			-DENABLE_MEMCHECK_OPTION=ON
+			-DENABLE_BAMF=ON
+			-DVALA_COMPILER=${VALAC}
+			-DVAPI_GEN=${VAPIGEN}
+			-DCMAKE_INSTALL_DATADIR=/usr/share )
 	cmake-utils_src_configure
 }
 
