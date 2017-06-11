@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -8,22 +8,22 @@ inherit cmake-utils gnome2-utils vala
 
 DESCRIPTION="Date and Time Indicator used by the Unity desktop"
 HOMEPAGE="https://launchpad.net/indicator-datetime"
-MY_PV="${PV/_p/+16.10.}.1"
+MY_PV="${PV/_p/+17.10.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="+eds"
-S=${WORKDIR}/${PN}-${MY_PV}
+S=${WORKDIR}
 RESTRICT="mirror"
 
 COMMON_DEPEND="
+	net-libs/libaccounts-glib
 	dev-libs/libdbusmenu:=
 	dev-libs/libtimezonemap:=
 	gnome-extra/evolution-data-server:=
 	media-libs/gstreamer:1.0
-	net-libs/libaccounts-glib
 	net-misc/url-dispatcher
 	sys-apps/util-linux
 	unity-indicators/ido:=
