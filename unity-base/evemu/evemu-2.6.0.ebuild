@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -14,13 +14,19 @@ SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV}.orig.t
 LICENSE="GPL-3 LGPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="test"
 RESTRICT="mirror"
 
 MAKEOPTS="${MAKEOPTS} -j1"
 
 src_prepare() {
+	default
 	eautoreconf
+}
+
+src_configure() {
+	econf --enable-static=no \
+		$(use_enable test tests)
 }
 
 src_install() {
