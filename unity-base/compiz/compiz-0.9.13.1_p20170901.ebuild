@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 PYTHON_COMPAT=( python2_7 )
@@ -9,7 +8,7 @@ inherit gnome2 cmake-utils eutils python-r1
 
 DESCRIPTION="OpenGL window and compositing manager patched for the Unity desktop"
 HOMEPAGE="https://launchpad.net/compiz"
-MY_PV="${PV/_p/+17.04.}"
+MY_PV="${PV/_p/+17.10.}"
 UURL="https://launchpad.net/ubuntu/+archive/primary/+files"
 SRC_URI="${UURL}/${PN}_${MY_PV}.orig.tar.gz
 	${UURL}/${PN}_${MY_PV}-0ubuntu1.diff.gz"
