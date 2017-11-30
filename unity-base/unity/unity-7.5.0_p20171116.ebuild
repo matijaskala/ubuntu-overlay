@@ -1,16 +1,15 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
-PYTHON_COMPAT=( python3_4 )
+PYTHON_COMPAT=( python3_5 )
 DISTUTILS_SINGLE_IMPL=1
 
 inherit cmake-utils distutils-r1 eutils gnome2-utils pam systemd toolchain-funcs
 
 DESCRIPTION="The Ubuntu Unity Desktop"
 HOMEPAGE="https://launchpad.net/unity"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+17.04.}.orig.tar.gz"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+18.04.}.orig.tar.gz"
 #SRC_URI="https://launchpad.net/${PN}/7.5/${PV}/+download/${P}.tar.bz2"
 
 LICENSE="GPL-3 LGPL-3"
