@@ -1,8 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-GNOME2_EAUTORECONF="yes"
 GNOME2_LA_PUNT="yes" # Needed with USE 'sendto'
 
 inherit gnome2 readme.gentoo-r1 virtualx
@@ -24,7 +23,7 @@ RESTRICT="test"
 # Require {glib,gdbus-codegen}-2.30.0 due to GDBus API changes between 2.29.92
 # and 2.30.0
 COMMON_DEPEND="
-	>=app-arch/gnome-autoar-0.1
+	>=app-arch/gnome-autoar-0.2.1
 	>=dev-libs/glib-2.51.2:2[dbus]
 	>=x11-libs/pango-1.28.3
 	>=x11-libs/gtk+-3.21.6:3[introspection?]
@@ -43,7 +42,7 @@ COMMON_DEPEND="
 	exif? ( >=media-libs/libexif-0.6.20 )
 	introspection? ( >=dev-libs/gobject-introspection-0.6.4:= )
 	selinux? ( >=sys-libs/libselinux-2 )
-	tracker? ( >=app-misc/tracker-0.16:= )
+	tracker? ( >=app-misc/tracker-1:= )
 	xmp? ( >=media-libs/exempi-2.1.0:2 )
 "
 DEPEND="${COMMON_DEPEND}
@@ -75,7 +74,7 @@ PDEPEND="
 
 src_prepare() {
 	# Ubuntu patchset #
-	for patch in $(cat "${FILESDIR}/patches/series" | grep -v '#'); do
+	for patch in $(cat "${FILESDIR}/patches/series" | grep -v '#' | grep -v '^08_' | grep -v '^dont_wrap_'); do
 		PATCHES+=( "${FILESDIR}/patches/${patch}" )
 	done
 
