@@ -7,8 +7,7 @@ inherit cmake-utils gnome2-utils vala
 
 DESCRIPTION="System sound indicator used by the Unity desktop"
 HOMEPAGE="https://launchpad.net/indicator-sound"
-MY_PV="${PV/_p/+17.10.}"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+17.10.}.1.orig.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
