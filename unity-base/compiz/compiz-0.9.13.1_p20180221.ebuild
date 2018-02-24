@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -8,7 +8,7 @@ inherit gnome2 cmake-utils eutils python-r1
 
 DESCRIPTION="OpenGL window and compositing manager patched for the Unity desktop"
 HOMEPAGE="https://launchpad.net/compiz"
-MY_PV="${PV/_p/+17.10.}"
+MY_PV="${PV/_p/+18.04.}.1"
 UURL="https://launchpad.net/ubuntu/+archive/primary/+files"
 SRC_URI="${UURL}/${PN}_${MY_PV}.orig.tar.gz
 	${UURL}/${PN}_${MY_PV}-0ubuntu1.diff.gz"
@@ -16,7 +16,7 @@ SRC_URI="${UURL}/${PN}_${MY_PV}.orig.tar.gz
 LICENSE="GPL-2 LGPL-2.1 MIT"
 SLOT="0/${PV}"
 KEYWORDS="amd64 x86"
-IUSE="kde test"
+IUSE="test"
 RESTRICT="mirror"
 
 S=${WORKDIR}
@@ -38,7 +38,7 @@ COMMONDEPEND="!!x11-wm/compiz
 	dev-cpp/glibmm
 	dev-libs/libxml2[${PYTHON_USEDEP}]
 	dev-libs/libxslt[${PYTHON_USEDEP}]
-	dev-libs/protobuf:=[${PYTHON_USEDEP}]
+	dev-libs/protobuf:=
 	dev-python/python-distutils-extra[${PYTHON_USEDEP}]
 	dev-python/pyrex[${PYTHON_USEDEP}]
 	gnome-base/gconf[${PYTHON_USEDEP}]
@@ -65,7 +65,6 @@ COMMONDEPEND="!!x11-wm/compiz
 	x11-libs/libSM
 	>=x11-libs/startup-notification-0.7
 	>=x11-wm/metacity-3.12
-	kde? ( >=kde-base/kwin-4.2.0 )
 	${PYTHON_DEPS}"
 
 DEPEND="${COMMONDEPEND}
@@ -119,9 +118,6 @@ src_prepare() {
 }
 
 src_configure() {
-	use kde && \
-		mycmakeargs+=(-DUSE_KDE4=ON) || \
-		mycmakeargs+=(-DUSE_KDE4=OFF)
 	use test && \
 		mycmakeargs+=(-DCOMPIZ_BUILD_TESTING=ON) || \
 		mycmakeargs+=(-DCOMPIZ_BUILD_TESTING=OFF)
@@ -133,6 +129,7 @@ src_configure() {
 		-DCOMPIZ_PACKAGING_ENABLED=TRUE
 		-DUSE_GCONF=OFF
 		-DUSE_GSETTINGS=ON
+		-DUSE_KDE4=OFF
 		-DCOMPIZ_DISABLE_GS_SCHEMAS_INSTALL=OFF
 		-DCOMPIZ_DEFAULT_PLUGINS="ccp")
 	configuration() {
