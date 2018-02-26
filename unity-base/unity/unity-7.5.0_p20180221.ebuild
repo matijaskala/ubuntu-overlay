@@ -9,7 +9,7 @@ inherit cmake-utils distutils-r1 eutils gnome2-utils pam systemd toolchain-funcs
 
 DESCRIPTION="The Ubuntu Unity Desktop"
 HOMEPAGE="https://launchpad.net/unity"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+18.04.}.orig.tar.gz"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+18.04.}.1.orig.tar.gz"
 #SRC_URI="https://launchpad.net/${PN}/7.5/${PV}/+download/${P}.tar.bz2"
 
 LICENSE="GPL-3 LGPL-3"
