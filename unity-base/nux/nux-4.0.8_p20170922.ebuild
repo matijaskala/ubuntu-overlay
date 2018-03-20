@@ -40,6 +40,7 @@ DEPEND="${RDEPEND}
 		dev-cpp/gtest )"
 
 src_prepare() {
+	default
 	# Keep warnings as warnings, not failures #
 	sed -e 's:-Werror ::g' \
 		-i configure.ac
