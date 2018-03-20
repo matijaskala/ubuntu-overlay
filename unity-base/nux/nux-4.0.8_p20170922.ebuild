@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,7 +7,7 @@ inherit autotools eutils
 
 DESCRIPTION="Visual rendering toolkit for the Unity desktop"
 HOMEPAGE="http://launchpad.net/nux"
-MY_PV="${PV/_p/+16.10.}"
+MY_PV="${PV/_p/+17.10.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3 LGPL-3"
@@ -40,6 +40,9 @@ DEPEND="${RDEPEND}
 		dev-cpp/gtest )"
 
 src_prepare() {
+	# Keep warnings as warnings, not failures #
+	sed -e 's:-Werror ::g' \
+		-i configure.ac
 	eautoreconf
 }
 
@@ -52,6 +55,8 @@ src_configure() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" install || die
+	emake DESTDIR="${ED}" install || die
+	dosym /usr/libexec/nux/unity_support_test /usr/$(get_libdir)/nux/unity_support_test
+
 	prune_libtool_files --modules
 }
