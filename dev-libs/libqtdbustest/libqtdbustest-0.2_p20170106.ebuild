@@ -19,7 +19,7 @@ IUSE="test"
 S=${WORKDIR}
 RESTRICT="mirror"
 
-DEPEND="~dev-cpp/gtest-${GTEST_PV}
+DEPEND="
 	dev-qt/qtcore:5
 	dev-qt/qtdbus:5
 	dev-qt/qttest:5"
@@ -28,6 +28,8 @@ RDEPEND="${DEPEND}"
 src_configure() {
 	local mycmakeargs=(
 		-DGMOCK_SOURCE_DIR="${WORKDIR}"/googletest-release-${GTEST_PV}/googlemock
+		-DGMOCK_INCLUDE_DIRS="${WORKDIR}"/googletest-release-${GTEST_PV}/googlemock/include
+		-DGTEST_INCLUDE_DIRS="${WORKDIR}"/googletest-release-${GTEST_PV}/googletest/include
 	)
 
 	cmake-utils_src_configure
