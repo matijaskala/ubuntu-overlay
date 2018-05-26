@@ -50,7 +50,6 @@ RDEPEND="${COMMON_DEPEND}
 	unity-base/unity-settings-daemon
 	unity-base/gsettings-ubuntu-touch-schemas
 	unity-base/unity-language-pack
-	x11-misc/appmenu-qt
 	x11-misc/appmenu-qt5
 	x11-themes/humanity-icon-theme
 	x11-themes/gtk-engines-murrine
@@ -76,7 +75,7 @@ src_prepare() {
 	fi
 
 	# Taken from http://ppa.launchpad.net/timekiller/unity-systrayfix/ubuntu/pool/main/u/unity/ #
-		#epatch -p1 "${FILESDIR}/systray-fix_saucy.diff"
+		eapply "${FILESDIR}/systray-fix_artful.diff"
 
 	# Setup Unity side launcher default applications #
 	sed \
@@ -136,7 +135,7 @@ src_prepare() {
 			-i data/unity7.service.in || \
 				die "Sed failed for data/unity7.service.in"
 
-	eapply -p1 "${FILESDIR}/unity-7.5.0_fix-missing-vector-includes.diff"
+	eapply "${FILESDIR}/unity-7.5.0_fix-missing-vector-includes.diff"
 
 	cmake-utils_src_prepare
 }
@@ -160,11 +159,7 @@ src_configure() {
 
 	mycmakeargs+=(-DCOMPIZ_BUILD_WITH_RPATH=FALSE
 		-DCOMPIZ_PACKAGING_ENABLED=TRUE
-		-DCOMPIZ_PLUGIN_INSTALL_TYPE=package
-		-DCOMPIZ_INSTALL_GCONF_SCHEMA_DIR=/etc/gconf/schemas
-		-DUSE_GSETTINGS=TRUE
-		-DCMAKE_INSTALL_PREFIX=/usr
-		-DCMAKE_SYSCONFDIR=/etc)
+		-DCOMPIZ_PLUGIN_INSTALL_TYPE=package)
 	CXXFLAGS+=" -I${WORKDIR}/${GLEWMX}/include"
 	cmake-utils_src_configure || die
 }
