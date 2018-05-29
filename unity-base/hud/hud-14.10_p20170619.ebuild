@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -9,7 +9,7 @@ inherit cmake-utils distutils-r1 flag-o-matic gnome2-utils vala
 
 DESCRIPTION="Backend for the Unity HUD"
 HOMEPAGE="https://launchpad.net/hud"
-MY_PV="${PV/_p/+17.04.}.1"
+MY_PV="${PV/_p/+17.10.}"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
@@ -35,7 +35,7 @@ DEPEND="dev-cpp/gmock
 	gnome-base/dconf
 	sys-libs/libnih[dbus]
 	x11-libs/bamf:=
-	x11-libs/dee-qt[qt5]
+	x11-libs/dee-qt[qt5(+)]
 	x11-libs/gsettings-qt
 	x11-libs/gtk+:3
 	x11-libs/pango
