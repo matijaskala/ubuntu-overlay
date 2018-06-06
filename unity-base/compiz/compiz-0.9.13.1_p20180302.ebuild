@@ -8,10 +8,10 @@ inherit gnome2 cmake-utils eutils python-r1
 
 DESCRIPTION="OpenGL window and compositing manager patched for the Unity desktop"
 HOMEPAGE="https://launchpad.net/compiz"
-MY_PV="${PV/_p/+18.04.}.1"
+MY_PV="${PV/_p/+18.04.}"
 UURL="https://launchpad.net/ubuntu/+archive/primary/+files"
 SRC_URI="${UURL}/${PN}_${MY_PV}.orig.tar.gz
-	${UURL}/${PN}_${MY_PV}-0ubuntu1.diff.gz"
+	${UURL}/${PN}_${MY_PV}-1.diff.gz"
 
 LICENSE="GPL-2 LGPL-2.1 MIT"
 SLOT="0/${PV}"
@@ -103,6 +103,8 @@ src_prepare() {
 	sed '/add_subdirectory (config)/d' \
 		-i compizconfig/libcompizconfig/CMakeLists.txt || die
 
+	sed -i 's:{CMAKE_INSTALL_PREFIX}/lib:{libdir}:' compizconfig/compizconfig-python/CMakeLists.txt || die
+
 	# Unset CMAKE_BUILD_TYPE env variable so that cmake-utils.eclass doesn't try to 'append-cppflags -DNDEBUG' #
 	#	resulting in compiz window placement not working #
 	export CMAKE_BUILD_TYPE=none
@@ -184,7 +186,7 @@ src_install() {
 		# Compiz profile upgrade helper files for ensuring smooth upgrades from older configuration files #
 		insinto /etc/compizconfig/upgrades/
 		doins debian/profile_upgrades/*.upgrade
-		insinto /usr/lib/compiz/migration/
+		insinto /usr/$(get_libdir)/compiz/migration/
 		doins postinst/convert-files/*.convert
 
 #		# Default GConf settings #
