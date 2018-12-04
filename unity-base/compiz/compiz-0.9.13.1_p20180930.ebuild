@@ -8,9 +8,9 @@ inherit gnome2 cmake-utils eutils python-r1
 
 DESCRIPTION="OpenGL window and compositing manager patched for the Unity desktop"
 HOMEPAGE="https://launchpad.net/compiz"
-MY_PV="${PV/_p/+18.04.}"
+MY_PV="${PV/_p/+18.10.}"
 UURL="https://launchpad.net/ubuntu/+archive/primary/+files"
-UVER="1"
+UVER="0ubuntu2"
 SRC_URI="${UURL}/${PN}_${MY_PV}.orig.tar.gz
 	${UURL}/${PN}_${MY_PV}-${UVER}.diff.gz"
 
@@ -35,7 +35,7 @@ COMMONDEPEND="!!x11-wm/compiz
 	!!dev-python/compizconfig-python
 	!!x11-apps/fusion-icon
 	dev-libs/boost:=[${PYTHON_USEDEP}]
-	dev-libs/glib:2[${PYTHON_USEDEP}]
+	dev-libs/glib:2
 	dev-cpp/glibmm
 	dev-libs/libxml2[${PYTHON_USEDEP}]
 	dev-libs/libxslt[${PYTHON_USEDEP}]
