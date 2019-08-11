@@ -10,7 +10,7 @@ inherit cmake-utils distutils-r1 eutils gnome2-utils pam systemd toolchain-funcs
 DESCRIPTION="The Ubuntu Unity Desktop"
 HOMEPAGE="https://launchpad.net/unity"
 GLEWMX="glew-1.13.0"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+18.10.}.2.orig.tar.gz
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+18.10.}.orig.tar.gz
 	mirror://sourceforge/glew/${GLEWMX}.tgz"
 #SRC_URI="https://launchpad.net/${PN}/7.5/${PV}/+download/${P}.tar.bz2"
 
