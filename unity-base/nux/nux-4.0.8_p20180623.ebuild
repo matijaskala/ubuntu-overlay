@@ -7,7 +7,7 @@ inherit autotools eutils
 
 DESCRIPTION="Visual rendering toolkit for the Unity desktop"
 HOMEPAGE="http://launchpad.net/nux"
-MY_PV="${PV/_p/+17.10.}"
+MY_PV="${PV/_p/+18.10.}"
 GLEWMX="glew-1.13.0"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz
 	mirror://sourceforge/glew/${GLEWMX}.tgz"
