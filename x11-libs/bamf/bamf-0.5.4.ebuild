@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 PYTHON_COMPAT=( python2_7 )
@@ -10,6 +9,7 @@ inherit autotools eutils vala python-single-r1
 DESCRIPTION="BAMF Application Matching Framework"
 HOMEPAGE="https://launchpad.net/bamf"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+16.10.}.orig.tar.gz"
+SRC_URI="https://launchpad.net/bamf/0.5/${PV}/+download/${P}.tar.gz"
 
 LICENSE="LGPL-3"
 SLOT="0"
@@ -29,8 +29,6 @@ DEPEND="${RDEPEND}
 	dev-util/gtk-doc-am
 	gnome-base/gnome-common
 	virtual/pkgconfig"
-
-S=${WORKDIR}
 
 src_prepare() {
 	eapply_user
