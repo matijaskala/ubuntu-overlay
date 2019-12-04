@@ -1,51 +1,54 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 VALA_MIN_API_VERSION=0.16
 VALA_USE_DEPEND=vapigen
-PYTHON_COMPAT=( python2_7 )
+VIRTUALX_REQUIRED=manual
 
-inherit autotools eutils flag-o-matic multilib-minimal python-single-r1 vala
+inherit autotools flag-o-matic multilib-minimal vala virtualx xdg-utils
 
 DESCRIPTION="Library to pass menu structure across DBus"
-HOMEPAGE="https://launchpad.net/dbusmenu"
-SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+17.04.}.1.orig.tar.gz"
+HOMEPAGE="https://launchpad.net/libdbusmenu"
+SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+18.10.}.orig.tar.gz"
 
 LICENSE="LGPL-2.1 LGPL-3"
 SLOT="0"
 KEYWORDS="alpha amd64 ~arm hppa ~mips ppc ppc64 sparc x86"
-IUSE="debug gtk +gtk3 +introspection"
+IUSE="debug gtk gtk3 +introspection +test"
 S=${WORKDIR}
-RESTRICT="mirror"
-
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+RESTRICT="mirror !test? ( test )"
 
 RDEPEND="
 	>=dev-libs/dbus-glib-0.100[${MULTILIB_USEDEP}]
-	>=dev-libs/json-glib-0.13.4[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.32[${MULTILIB_USEDEP}]
+	test? ( >=dev-libs/json-glib-0.13.4[${MULTILIB_USEDEP}] )
+	>=dev-libs/glib-2.35.4[${MULTILIB_USEDEP}]
 	dev-libs/libxml2[${MULTILIB_USEDEP}]
 	gtk? ( x11-libs/gtk+:2[introspection?,${MULTILIB_USEDEP}] )
 	gtk3? ( >=x11-libs/gtk+-3.2:3[introspection?,${MULTILIB_USEDEP}] )
-	introspection? ( >=dev-libs/gobject-introspection-1 )
-	!<${CATEGORY}/${PN}-0.5.1-r200"
+	introspection? ( >=dev-libs/gobject-introspection-1 )"
+# tests also have optional dep on valgrind which we do not enforce
 DEPEND="${RDEPEND}
 	app-text/gnome-doc-utils
-	dev-util/gtk-doc
+	dev-util/glib-utils
 	dev-util/intltool
 	sys-devel/gettext
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	introspection? ( $(vala_depend) )"
+
+pkg_setup() {
+	xdg_environment_reset
+}
 
 src_prepare() {
 	if use introspection; then
 		vala_src_prepare
 		export VALA_API_GEN="${VAPIGEN}"
 	fi
-	python_fix_shebang tools
 
+	eapply "${FILESDIR}/${PN}-16.04.0-configure-fix.patch"
+	eapply "${FILESDIR}/${PN}-16.04.0-werror.patch"
 	eapply_user
 	eautoreconf
 }
@@ -54,13 +57,15 @@ multilib_src_configure() {
 	append-flags -Wno-error #414323
 
 	local myconf=(
+		--cache-file="${BUILD_DIR}"/config.cache
 		--disable-gtk
 		--disable-static
-		--disable-silent-rules
+		# dumper extra tool is only for GTK+-2.x
 		--disable-dumper
 		$(multilib_native_use_enable introspection)
 		$(multilib_native_use_enable introspection vala)
 		$(use_enable debug massivedebugging)
+		$(use_enable test tests)
 	)
 	local ECONF_SOURCE=${S}
 	econf "${myconf[@]}"
@@ -99,7 +104,19 @@ multilib_src_compile() {
 		gtk_emake
 }
 
-src_test() { :; } #440192
+multilib_src_test() {
+	emake check
+
+	gtk_test() {
+		# please keep the list of GTK+ tests up-to-date
+		emake -C "${BUILD_DIR}"/tests check \
+			TESTS="test-gtk-objects-test test-gtk-label
+				test-gtk-shortcut test-gtk-reorder test-gtk-remove"
+	}
+	local MULTIBUILD_VARIANTS=( "${GTK_VARIANTS[@]}" )
+	[[ ${GTK_VARIANTS[@]} ]] && virtx multibuild_foreach_variant \
+		gtk_test
+}
 
 multilib_src_install() {
 	emake -j1 DESTDIR="${D}" install
@@ -111,7 +128,7 @@ multilib_src_install() {
 
 multilib_src_install_all() {
 	einstalldocs
-	prune_libtool_files
+	find "${D}" -name '*.la' -delete || die
 }
 
 pkg_preinst() {
