@@ -1,13 +1,13 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit autotools eutils flag-o-matic virtualx multilib-minimal
 
 DESCRIPTION="A set of symbols and convenience functions that all indicators would like to use"
 HOMEPAGE="https://launchpad.net/libindicator"
-MY_PV=${PV/_p/+16.10.}
+MY_PV=${PV/_p/+18.04.}.1
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"
@@ -19,7 +19,8 @@ RESTRICT="mirror"
 
 RDEPEND=">=dev-libs/glib-2.37[${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-2.18:2[${MULTILIB_USEDEP}]"
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	test? ( dev-util/dbus-test-runner )"
 
