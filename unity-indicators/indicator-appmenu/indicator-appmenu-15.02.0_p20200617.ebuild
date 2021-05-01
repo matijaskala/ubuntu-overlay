@@ -7,7 +7,7 @@ inherit autotools eutils flag-o-matic gnome2-utils
 
 DESCRIPTION="Indicator for application menus"
 HOMEPAGE="https://launchpad.net/indicator-appmenu"
-MY_PV="${PV/_p/+16.10.}"
+MY_PV="${PV/_p/+20.10.}.2"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${MY_PV}.orig.tar.gz"
 
 LICENSE="GPL-3"

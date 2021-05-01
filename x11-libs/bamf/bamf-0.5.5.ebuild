@@ -8,7 +8,7 @@ inherit autotools vala
 DESCRIPTION="BAMF Application Matching Framework"
 HOMEPAGE="https://launchpad.net/bamf"
 SRC_URI="https://launchpad.net/ubuntu/+archive/primary/+files/${PN}_${PV/_p/+16.10.}.orig.tar.gz"
-SRC_URI="https://launchpad.net/bamf/0.5/${PV}/+download/${P}.tar.gz"
+SRC_URI="https://launchpad.net/bamf/0.5/${PV}/+download/${P}.tar.xz"
 
 LICENSE="LGPL-3"
 SLOT="0"
@@ -33,8 +33,6 @@ src_prepare() {
 	vala_src_prepare
 	export VALA_API_GEN="${VAPIGEN}"
 
-	sed -e "s:-Werror::g" \
-		-i "configure.ac" || die
 	eautoreconf
 }
 
